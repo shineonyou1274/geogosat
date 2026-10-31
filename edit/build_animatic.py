@@ -157,7 +157,7 @@ for k, (f, at, vol, maxd) in enumerate(EV):
     fc.append(f"[{k + 1}]{trim}aresample=48000,aformat=channel_layouts=stereo,volume={vol},adelay={ms}|{ms}[a{k}]")
     labels.append(f"[a{k}]")
 fc.append("".join(labels) + f"amix=inputs={len(EV)}:normalize=0:duration=longest,atrim=0:{TOTAL}[aout]")
-NAME = f"{OUT}/geogo74_animatic_v3.mp4"
+NAME = f"{OUT}/geogo74_animatic_v4.mp4"
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", f"{OUT}/video.mp4", *inputs,
                 "-filter_complex", ";".join(fc), "-map", "0:v", "-map", "[aout]",
                 "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", NAME], check=True)
