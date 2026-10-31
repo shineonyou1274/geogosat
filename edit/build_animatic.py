@@ -28,19 +28,21 @@ def txt(text, y, size, color=WHITE, t0=0, t1=999, x="(w-text_w)/2", box=False):
 T = [
     ("vid", "1-1", 5, "1-1", {}),
     ("img", K1 + "1-2.png", 2, "1-2", {}),
-    ("img", KV + "1-3.png", 5, "1-3", {"txt": [txt("1%", 120, 90, RED)]}),
+    ("img", KV + "1-3.png", 6, "1-3", {"txt": [txt("1%", 120, 90, RED)]}),
     ("vid", "1-4", 4, "1-4", {}),
-    ("vid", "1-5", 7, "1-5", {}),
+    ("vid", "1-5", 6, "1-5", {}),
+    ("img", KV + "1-5.png", 5, "1-5", {}),
     ("img", K1 + "1-6.png", 2, "1-6", {}),
     ("vid", "1-7", 5, "1-7", {"txt": [txt("100%", 90, 90, GREEN, 3.2)]}),
     ("img", KV + "1-8.png", 2, "1-8", {"txt": [txt("100%", 60, 80, GREEN)]}),
-    ("img", K1 + "1-9.png", 5, "1-9", {}),
-    ("vimg", K1 + "3-1.png", 4, "3-1", {"txt": [txt("퀘스트 발견: 최종 보스 '수능'", 70, 64, GOLD, box=True)]}),
-    ("vimg", K1 + "3-2.png", 3, "3-2", {}),
-    ("vimg", K1 + "3-3.png", 4, "3-3", {}),
-    ("img", K1 + "4-1.png", 3, "4-1", {}),
+    ("img", K1 + "1-9.png", 6, "1-9", {}),
+    ("img", KV + "1-8.png", 5, "1-8", {"txt": [txt("100%", 60, 80, GREEN)]}),
+    ("vimg", K1 + "3-1.png", 9, "3-1", {"txt": [txt("퀘스트 발견: 최종 보스 '수능'", 70, 64, GOLD, box=True)]}),
+    ("vimg", K1 + "3-2.png", 7.5, "3-2", {}),
+    ("vimg", K1 + "3-3.png", 8.5, "3-3", {}),
+    ("img", K1 + "4-1.png", 8, "4-1", {}),
     ("vid", "4-2", 4, "4-2", {"crop": 1.18}),
-    ("vid", "4-3", 3, "4-3", {"start": 2}),
+    ("vid", "4-3", 4, "4-3", {"start": 1}),
     ("col", "black", 2, "", {}),
     ("vid", "S-01", 8, "S-1", {"txt": [txt("So Long, So Good", "(h-text_h)/2", 110, WHITE, 3.5)]}),
     ("img", K2 + "S-02.png", 3, "S-2", {}),
@@ -122,7 +124,41 @@ for i, (kind, src, dur, lab, opt) in enumerate(T):
 with open(f"{OUT}/list.txt", "w") as f:
     f.writelines(f"file '{s}'\n" for s in segs)
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", f"{OUT}/list.txt", "-c", "copy", f"{OUT}/video.mp4"], check=True)
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", f"{OUT}/video.mp4", "-i", SONG,
-                "-filter_complex", "[1]adelay=60000|60000,apad[a]", "-map", "0:v", "-map", "[a]", "-shortest",
-                "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", f"{OUT}/geogo74_animatic_v2.mp4"], check=True)
-print("done", f"{OUT}/geogo74_animatic_v2.mp4")
+# 오디오: 컷 시작 시각을 계산해 대사, 효과음, 유로비트, 노래를 배치한다.
+starts, acc = {}, 0.0
+for kind, src, dur, lab, opt in T:
+    starts.setdefault(lab, acc)
+    acc += dur
+TOTAL = acc
+SONG_AT = starts["S-1"]
+V = f"{ROOT}/voice/final/"
+S = f"{ROOT}/edit/sfx/"
+# (파일, 시작 초, 음량, 최대 길이)
+EV = [
+    (S + "clock.wav", 0.0, 0.35, starts["1-4"] - 0.2),
+    (V + "01_student_1-3.wav", 2.0, 1.0, None),
+    (V + "02_chef_1-5.wav", starts["1-5"] + 0.6, 1.0, None),
+    (S + "spark.wav", starts["1-7"] + 2.4, 0.8, None),
+    (V + "03_chef_1-9.wav", starts["1-9"] + 0.4, 1.0, None),
+    (V + "04_chef_3-1.wav", starts["3-1"] + 0.2, 1.0, None),
+    (V + "05_math_3-2.wav", starts["3-2"] + 0.2, 1.0, None),
+    (V + "06_eng_3-3.wav", starts["3-3"] + 0.3, 1.0, None),
+    (V + "07_chef_4-1.wav", starts["4-1"] + 1.0, 1.0, None),
+    (S + "eurobeat.wav", starts["4-2"], 0.55, starts["S-1"] - 2 - starts["4-2"]),
+    (V + "08_chorus.wav", starts["4-3"] + 0.4, 1.0, None),
+    (SONG, SONG_AT, 1.0, None),
+    (V + "12_chef_E-1.wav", starts["E-1"] + 0.4, 1.0, None),
+]
+inputs, fc, labels = [], [], []
+for k, (f, at, vol, maxd) in enumerate(EV):
+    inputs += ["-i", f]
+    trim = f"atrim=0:{maxd}," if maxd else ""
+    ms = int(at * 1000)
+    fc.append(f"[{k + 1}]{trim}aresample=48000,aformat=channel_layouts=stereo,volume={vol},adelay={ms}|{ms}[a{k}]")
+    labels.append(f"[a{k}]")
+fc.append("".join(labels) + f"amix=inputs={len(EV)}:normalize=0:duration=longest,atrim=0:{TOTAL}[aout]")
+NAME = f"{OUT}/geogo74_animatic_v3.mp4"
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", f"{OUT}/video.mp4", *inputs,
+                "-filter_complex", ";".join(fc), "-map", "0:v", "-map", "[aout]",
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", NAME], check=True)
+print("done", NAME, "song starts at", SONG_AT, "total", TOTAL)

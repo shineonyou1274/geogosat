@@ -12,7 +12,8 @@
 | `keyframes/v2/` | 사복과 거창고 장소를 반영한 정지 그림 11장 |
 | `drafts/v2/` | 시안 v2 영상과 1080p 업스케일 작업 번호 |
 | `school/` | 거창고 실제 사진(복도, 잔디 마당)과 시험 그림 |
-| `edit/` | 가편집본을 만드는 스크립트와 한글 글꼴(Black Han Sans, OFL) |
+| `edit/` | 가편집본 스크립트, 효과음·유로비트 합성 스크립트(`make_sfx.py`)와 결과(`sfx/`), 한글 글꼴(Black Han Sans, OFL) |
+| `voice/` | Higgsfield로 만든 대사 음성 원본과 편집본 |
 
 노래 파일(So Long, So Good)은 저작권 때문에 저장소에 넣지 않습니다.
 
