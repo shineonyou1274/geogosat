@@ -8,8 +8,18 @@
 | `sheets/` | 캐릭터 시트 (셰프 선생님, 주인공 학생, 불안 김) |
 | `keyframes/part1/` | 1부 장면 정지 그림 15장과 작업 번호 |
 | `keyframes/part2/` | 2부와 마무리 정지 그림 21장과 작업 번호 |
-| `drafts/` | AI 영상 480p 시안 9컷과 작업 번호 |
+| `drafts/` | AI 영상 480p 시안 9컷과 작업 번호 (첫 판, 교복 포함) |
+| `keyframes/v2/` | 사복과 거창고 장소를 반영한 정지 그림 11장 |
+| `drafts/v2/` | 시안 v2 영상과 1080p 업스케일 작업 번호 |
+| `school/` | 거창고 실제 사진(복도, 잔디 마당)과 시험 그림 |
+| `edit/` | 가편집본을 만드는 스크립트와 한글 글꼴(Black Han Sans, OFL) |
 
 노래 파일(So Long, So Good)은 저작권 때문에 저장소에 넣지 않습니다.
+
+가편집본 만들기:
+
+```bash
+python3 edit/build_animatic.py <노래.wav> <1080p 클립 폴더> <출력 폴더>
+```
 
 © shiny-peace
