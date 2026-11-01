@@ -150,7 +150,7 @@ t0 = MEME + 11.4
 shot(t0, "popup", "C5_aang", title="조림 완성 반응.mp4  (최강록 셰프)")
 ov(t0, t0 + 1.2, "big", text="조림 완성!", color=GOLD, y=0.12, size=120, slam=True)
 au(SFX + "ding.wav", t0, 0.6)
-t0 += 6.0
+t0 += 8.1
 shot(t0, "code", None, dense=0.15)
 ov(t0, t0 + 6.4, "recipe", title="수능 대박 조림 레시피", kicker="Peace쌤 x 조림 셰프",
    lines=["주재료 | 거고 74기의 지난 3년", "불 세기 | 약불", "제거할 잡내 | 수능 불안감 (국자로 떠서 창밖으로)", "비법 재료 | Peace쌤이 챙긴 핫팩 (손끝 해동, 멘탈 100%)", "완성 | 2026.11.19 (수능 대박의 날)"])
@@ -1637,5 +1637,5 @@ if __name__ == "__main__":
       subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", f"{OUT}/list.txt", "-c", "copy", f"{OUT}/video.mp4"], check=True)
     mix_audio(TOTAL)
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", f"{OUT}/video.mp4", "-i", f"{OUT}/audio.wav", "-map", "0:v", "-map", "1:a",
-                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", f"{OUT}/geogo74_v18.mp4"], check=True)
-    print("done", f"{OUT}/geogo74_v18.mp4", "total", round(TOTAL, 1))
+                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", f"{OUT}/geogo74_v19.mp4"], check=True)
+    print("done", f"{OUT}/geogo74_v19.mp4", "total", round(TOTAL, 1))
