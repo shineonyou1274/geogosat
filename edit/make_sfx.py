@@ -50,3 +50,29 @@ for b in range(bars * 4 * 2):
     place(v * env(d, 4) * 0.25, s, 0.5)
 save("eurobeat", np.tanh(mix * 1.2))
 print("ok")
+
+# ---- v5 추가 효과음 ----
+def bell(f, d, k=3):
+    tt = t(d); return sum(np.sin(2*np.pi*f*m*tt)*np.exp(-tt*k*m)/m for m in (1, 2.01, 3.03))
+_c = bell(1568, 1.2); _d = np.pad(bell(2093, 1.0), (int(SR*0.12), 0)); _c[:len(_d)] += _d[:len(_c)]; save("chime", _c)
+nz = np.random.randn(int(SR*0.5))
+sw = np.convolve(nz, np.ones(30)/30, "same") * np.sin(np.pi*np.linspace(0, 1, len(nz)))**2
+save("whoosh", sw)
+tt = t(0.6); save("impact", np.sin(2*np.pi*np.cumsum(90*np.exp(-tt*6)+40)/SR)*np.exp(-tt*5) + np.random.randn(len(tt))*np.exp(-tt*30)*0.6)
+tt = t(0.45); sc = np.random.randn(len(tt)) * np.exp(-tt*4); sc *= np.sin(2*np.pi*np.cumsum(30+400*(1-tt/0.45))/SR) > 0
+save("scratch", sc)
+notes = [523, 659, 784, 1047, 1319]
+save("item", np.concatenate([np.sin(2*np.pi*f*t(0.09))*env(0.09, 15) for f in notes] + [bell(1568, 0.8, 4)]))
+tt = t(1.2); save("riser", np.sin(2*np.pi*np.cumsum(200+1400*(tt/1.2)**2)/SR)*0.5*(tt/1.2))
+save("ding", bell(1760, 0.9, 5))
+save("quest", np.concatenate([np.sin(2*np.pi*f*t(0.12))*env(0.12, 12) for f in (392, 523, 784)] + [bell(1047, 0.6)]))
+# 가벼운 피치카토 BGM (100bpm, 16마디)
+bpmb = 100; bt = 60/bpmb; L2 = int(SR*bt*4*16); bgm = np.zeros(L2)
+scale_ = [0, 2, 4, 7, 9, 12, 9, 7]
+for b in range(16*4*2):
+    s = b*bt/2; f = mid(60 + scale_[(b*3) % 8] + (0 if (b//16) % 2 == 0 else -5))
+    i = int(s*SR); sig = np.sin(2*np.pi*f*t(0.25))*env(0.25, 14); j = min(L2, i+len(sig)); bgm[i:j] += sig[:j-i]*0.5
+    if b % 4 == 0:
+        sig = np.sin(2*np.pi*mid(36+scale_[(b//8) % 4])*t(0.5))*env(0.5, 5); j = min(L2, i+len(sig)); bgm[i:j] += sig[:j-i]*0.6
+save("bgm_pluck", bgm)
+print("v5 sfx ok")
