@@ -76,3 +76,18 @@ for b in range(16*4*2):
         sig = np.sin(2*np.pi*mid(36+scale_[(b//8) % 4])*t(0.5))*env(0.5, 5); j = min(L2, i+len(sig)); bgm[i:j] += sig[:j-i]*0.6
 save("bgm_pluck", bgm)
 print("v5 sfx ok")
+
+# ---- v6 추가 효과음 ----
+tt = t(0.035); key = np.random.randn(len(tt)) * env(0.035, 150) + np.sin(2*np.pi*1800*tt)*env(0.035, 300)*0.4
+typing = np.zeros(int(SR*3.0))
+rr = np.random.RandomState(3)
+pos = 0.0
+while pos < 2.9:
+    i = int(pos*SR); typing[i:i+len(key)] += key * rr.uniform(0.5, 1.0); pos += rr.uniform(0.05, 0.11)
+save("typing", typing)
+save("blip", np.sin(2*np.pi*2400*t(0.04))*env(0.04, 60))
+al = np.concatenate([np.sin(2*np.pi*(880 if k % 2 == 0 else 660)*t(0.18))*0.8 for k in range(8)])
+save("alarm", al)
+gl = np.random.randn(int(SR*0.3)) * (np.random.rand(int(SR*0.3)) > 0.6) * env(0.3, 6)
+save("glitch", gl)
+print("v6 sfx ok")
