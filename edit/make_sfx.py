@@ -91,3 +91,14 @@ save("alarm", al)
 gl = np.random.randn(int(SR*0.3)) * (np.random.rand(int(SR*0.3)) > 0.6) * env(0.3, 6)
 save("glitch", gl)
 print("v6 sfx ok")
+
+# ---- v7 추가 효과음 ----
+save("click", np.random.randn(int(SR*0.02))*env(0.02, 300) + np.sin(2*np.pi*3000*t(0.02))*env(0.02, 200))
+tt = t(0.7); save("boing", np.sin(2*np.pi*np.cumsum(220 + 180*np.sin(2*np.pi*9*tt)*np.exp(-tt*3))/SR)*np.exp(-tt*3.5))
+pr = np.zeros(int(SR*2.4))
+for k in range(16):
+    i = int(k*0.15*SR); seg = (np.sign(np.sin(2*np.pi*95*t(0.11)))*0.3 + np.random.randn(len(t(0.11)))*0.15)*np.sin(np.pi*np.linspace(0, 1, len(t(0.11))))
+    pr[i:i+len(seg)] += seg
+save("printer", pr)
+tt = t(0.5); save("confetti", np.random.randn(len(tt))*np.exp(-tt*9)*0.6 + sum(np.sin(2*np.pi*f*tt)*np.exp(-tt*7) for f in (1320, 1760, 2093))*0.3)
+print("v7 sfx ok")
