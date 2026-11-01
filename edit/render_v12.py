@@ -262,15 +262,15 @@ TC = ROOT + "/keyframes/teacher/"
 M0 = SE + 0.8
 shot(SE, "color", (0, 0, 0))
 au(ROOT + "/voice/teacher/message_ff.wav", M0, 1.0)
-FF0, FF1 = 40.6, 58.9
+FF0, FF1, FFR = 34.4, 58.9, 3.0
 
 
 def tm(x):
     if x <= FF0:
         return x
     if x <= FF1:
-        return FF0 + (x - FF0) / 2
-    return x - (FF1 - FF0) / 2
+        return FF0 + (x - FF0) / FFR
+    return x - (FF1 - FF0) * (1 - 1 / FFR)
 ov(SE + 0.1, M0 + 0.2, "hsub", text="Peace쌤이 74기에게", y=0.5, size=130)
 SH = [  # (시작, 그림, 움직임, 확대, 초점)
     (0.0, "a1_night", "push", 1.0, (0.5, 0.5)), (3.4, "a1_night", "pull", 1.6, (0.15, 0.35)),
@@ -285,7 +285,7 @@ SH = [  # (시작, 그림, 움직임, 확대, 초점)
     (59.0, "a7_road", "push", 1.0, (0.5, 0.5)), (62.5, "a8_fighting", "push", 1.0, (0.55, 0.5)),
 ]
 for t_, im_, m_, z_, f_ in SH:
-    shot(M0 + tm(t_), "img", TC + im_ + ".png", m=m_, zoom=z_, focus=f_, xf=0.35 if not (FF0 < t_ < FF1) else None, ff=FF0 <= t_ < FF1)
+    shot(M0 + tm(t_), "img", TC + im_ + ".png", m=m_, zoom=z_, focus=f_, xf=0.35 if not (FF0 <= t_ < FF1) else None, ff=FF0 <= t_ < FF1)
 SUBS = [
     (0.0, 6.6, "안녕, 74기. 내일이 수능이라는 게 정말 믿어지지 않는 것 같아."),
     (6.8, 9.4, "너희들 1학년 들어왔을 때부터"),
@@ -308,8 +308,8 @@ SUBS = [
 ]
 for a_, b_, tx in SUBS:
     ov(M0 + tm(a_), M0 + tm(b_), "hsub", text=tx, y=0.86, size=88)
-ov(M0 + tm(40.7), M0 + tm(58.9), "ffwd")
-au(SFX + "scratch.wav", M0 + tm(40.6) - 0.05, 0.5)
+ov(M0 + tm(34.5), M0 + tm(58.9), "ffwd")
+au(SFX + "scratch.wav", M0 + tm(34.4) - 0.05, 0.5)
 ov(M0 + tm(62.5), M0 + tm(63.4), "big", text="파이팅!", color=GOLD, y=0.3, size=200, slam=True)
 ov(M0 + tm(63.5), M0 + tm(67.6), "big", text="사랑해.", color=PINK, y=0.3, size=220, slam=True)
 C7 = M0 + tm(67.8) - 13.2
@@ -1222,7 +1222,7 @@ def draw_ov(frame, o, t):
             d.line([(0, y), (W, y)], fill=(0, 0, 0, 40))
         yb = (lt * 900) % H
         d.rectangle([0, yb, W, yb + 18], fill=(255, 255, 255, 40))
-        a = text_img(">> x2", 120, WHITE, None, 8)
+        a = text_img(">> x3", 120, WHITE, None, 8)
         frame.alpha_composite(a, (W - a.width - 50, 30))
         b = cached(("ffn", 1), lambda: text_img("빨리 감기 중... (질질 짜는 중이라)", 60, (255, 230, 170), None, 6, fontpath=HANDF))
         if int(lt * 2.5) % 2 == 0:
@@ -1499,5 +1499,5 @@ if __name__ == "__main__":
       subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", f"{OUT}/list.txt", "-c", "copy", f"{OUT}/video.mp4"], check=True)
     mix_audio(TOTAL)
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", f"{OUT}/video.mp4", "-i", f"{OUT}/audio.wav", "-map", "0:v", "-map", "1:a",
-                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", f"{OUT}/geogo74_v12.mp4"], check=True)
-    print("done", f"{OUT}/geogo74_v12.mp4", "total", round(TOTAL, 1))
+                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", f"{OUT}/geogo74_v13.mp4"], check=True)
+    print("done", f"{OUT}/geogo74_v13.mp4", "total", round(TOTAL, 1))
